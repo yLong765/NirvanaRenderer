@@ -1,4 +1,4 @@
-"D:\Program Files\JetBrains\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" D:\Work\C++\NirvanaRendere
+"D:\Work\IDE\CLion 2020.2.3\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" D:\Work\Git\NirvanaRenderer
 -- Configuring done
 -- Generating done
--- Build files have been written to: D:/Work/C++/NirvanaRendere/cmake-build-debug
+-- Build files have been written to: D:/Work/Git/NirvanaRenderer/cmake-build-debug

@@ -1,6 +1,22 @@
 cmake_minimum_required(VERSION 3.17)
-project(NirvanaRendere)
+project(NirvanaRenderer)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(NirvanaRendere main.cpp Core/vec.h Core/mat.h Platform/win.h api.h Core/renderer.h Core/input.h Core/color.h Core/data_struct.h Core/mathf.h Core/transform.h Core/model.h)
+include_directories(.)
+include_directories(Core)
+include_directories(Platform)
+
+add_executable(NirvanaRenderer
+        Core/color.h
+        Core/data_struct.h
+        Core/input.h
+        Core/mat.h
+        Core/mathf.h
+        Core/model.h
+        Core/renderer.h
+        Core/transform.h
+        Core/vec.h
+        Platform/win.h
+        api.h
+        main.cpp Core/maths.h)

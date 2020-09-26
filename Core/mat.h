@@ -91,10 +91,8 @@ typedef struct mat {
 
     void set_lookat(const vec eye, const vec at, const vec up) {
         vec xaxis, yaxis, zaxis;
-        zaxis = at - eye;
-        zaxis.normalize();
-        xaxis = vec_cross(up, zaxis);
-        xaxis.normalize();
+        zaxis = (at - eye).normalize();
+        xaxis = (vec_cross(up, zaxis)).normalize();
         yaxis = vec_cross(zaxis, xaxis);
 
         matrix[0][0] = xaxis.x;
@@ -126,6 +124,23 @@ typedef struct mat {
         matrix[2][3] = 1;
     }
 
+    void set_viewport(float width, float height) {
+        set_identity();
+        matrix[0][0] = width * 0.5
+    }
+
+    void viewport(int x, int y, int w, int h, float n, float f)
+    {
+        Viewport = Matrix::identity();
+        Viewport[0][3] = x + w / 2.f;
+        Viewport[1][3] = y + h / 2.f;
+        Viewport[2][3] = (f + n) / 2.f;
+
+        Viewport[0][0] = w / 2.f;
+        Viewport[1][1] = h / 2.f;
+        Viewport[2][2] = (f - n) / 2.f;
+    }
+
 } mat_t;
 
 mat_t operator+(mat_t m1, const mat_t &m2) {
@@ -146,14 +161,10 @@ mat_t operator*(const mat_t &m1, const mat_t &m2) {
     mat_t m;
     for (size_t i = 0; i < 4; i++)
         for (size_t j = 0; j < 4; j++)
-            for (size_t k = 0; k < 4; k++)
-                m[i][j] = m1[i][k] * m2[k][j];
-//    for (size_t i = 0; i < 4; i++)
-//        for (size_t j = 0; j < 4; j++)
-//            m[j][i] = m1[j][0] * m2[0][i] +
-//                      m1[j][1] * m2[1][i] +
-//                      m1[j][2] * m2[2][i] +
-//                      m1[j][3] * m2[3][i];
+            m[j][i] = m1[j][0] * m2[0][i] +
+                      m1[j][1] * m2[1][i] +
+                      m1[j][2] * m2[2][i] +
+                      m1[j][3] * m2[3][i];
     return m;
 }
 

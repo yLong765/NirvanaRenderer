@@ -13,7 +13,7 @@ int main() {
 
     win_t *win = create_win(width, height, "NirvanaRenderer", renderer);
 
-    Model *cube = new Model(R"(D:\Work\C++\NirvanaRendere\Model\cube.obj)");
+    Model *cube = new Model(R"(D:\Work\Git\NirvanaRenderer\Model\cube.obj)");
 
     mat_t world, view, projection;
     world.set_identity();
@@ -21,9 +21,6 @@ int main() {
     float aspect = (float) width / (float) height;
     projection.set_perspective(PI * 0.5f, aspect, 1.0f, 500.0f);
     mat_t transform = world * view * projection;
-    cout << world.toString() << endl << endl;
-    cout << view.toString() << endl << endl;
-    cout << projection.toString() << endl << endl;
     for (int i = 0; i < cube->face_size(); i++) {
         vec_t v1 = cube->vert(i, 0) * transform;
         vec_t v2 = cube->vert(i, 1) * transform;

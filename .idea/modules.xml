@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/NirvanaRendere.iml" filepath="$PROJECT_DIR$/.idea/NirvanaRendere.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/NirvanaRenderer.iml" filepath="$PROJECT_DIR$/.idea/NirvanaRenderer.iml" />
     </modules>
   </component>
 </project>

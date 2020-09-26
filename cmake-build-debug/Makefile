@@ -58,19 +58,19 @@ cmake_force:
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "D:\Program Files\JetBrains\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe"
+CMAKE_COMMAND = "D:\Work\IDE\CLion 2020.2.3\bin\cmake\win\bin\cmake.exe"
 
 # The command to remove a file.
-RM = "D:\Program Files\JetBrains\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f
+RM = "D:\Work\IDE\CLion 2020.2.3\bin\cmake\win\bin\cmake.exe" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = D:\Work\C++\NirvanaRendere
+CMAKE_SOURCE_DIR = D:\Work\Git\NirvanaRenderer
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = D:\Work\C++\NirvanaRendere\cmake-build-debug
+CMAKE_BINARY_DIR = D:\Work\Git\NirvanaRenderer\cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -78,7 +78,7 @@ CMAKE_BINARY_DIR = D:\Work\C++\NirvanaRendere\cmake-build-debug
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	"D:\Program Files\JetBrains\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available."
+	"D:\Work\IDE\CLion 2020.2.3\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available."
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -89,7 +89,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	"D:\Program Files\JetBrains\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	"D:\Work\IDE\CLion 2020.2.3\bin\cmake\win\bin\cmake.exe" --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -99,9 +99,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start D:\Work\C++\NirvanaRendere\cmake-build-debug\CMakeFiles D:\Work\C++\NirvanaRendere\cmake-build-debug\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\Work\Git\NirvanaRenderer\cmake-build-debug\CMakeFiles D:\Work\Git\NirvanaRenderer\cmake-build-debug\CMakeFiles\progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start D:\Work\C++\NirvanaRendere\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\Work\Git\NirvanaRenderer\cmake-build-debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -130,17 +130,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named NirvanaRendere
+# Target rules for targets named NirvanaRenderer
 
 # Build rule for target.
-NirvanaRendere: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 NirvanaRendere
-.PHONY : NirvanaRendere
+NirvanaRenderer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 NirvanaRenderer
+.PHONY : NirvanaRenderer
 
 # fast build rule for target.
-NirvanaRendere/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRendere.dir\build.make CMakeFiles/NirvanaRendere.dir/build
-.PHONY : NirvanaRendere/fast
+NirvanaRenderer/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRenderer.dir\build.make CMakeFiles/NirvanaRenderer.dir/build
+.PHONY : NirvanaRenderer/fast
 
 main.obj: main.cpp.obj
 
@@ -148,7 +148,7 @@ main.obj: main.cpp.obj
 
 # target to build an object file
 main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRendere.dir\build.make CMakeFiles/NirvanaRendere.dir/main.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRenderer.dir\build.make CMakeFiles/NirvanaRenderer.dir/main.cpp.obj
 .PHONY : main.cpp.obj
 
 main.i: main.cpp.i
@@ -157,7 +157,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRendere.dir\build.make CMakeFiles/NirvanaRendere.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRenderer.dir\build.make CMakeFiles/NirvanaRenderer.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -166,7 +166,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRendere.dir\build.make CMakeFiles/NirvanaRendere.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NirvanaRenderer.dir\build.make CMakeFiles/NirvanaRenderer.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -177,7 +177,7 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... NirvanaRendere
+	@echo ... NirvanaRenderer
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
