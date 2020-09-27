@@ -7,6 +7,8 @@
 
 #include <string>
 
+using namespace std;
+
 typedef struct color {
     UCHAR bgra[4];
     UCHAR bytespp;
@@ -46,9 +48,9 @@ typedef struct color {
         return res;
     }
 
-    std::string toString() {
-        std::string str = "";
-        for (size_t i = 0; i < 4; i++) {
+    string toString() {
+        string str = "";
+        for (int i = 0; i < 4; i++) {
             str += std::to_string((int) bgra[i]) + " ";
         }
         return str;

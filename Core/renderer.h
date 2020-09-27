@@ -71,7 +71,7 @@ typedef struct {
         }
     }
 
-    void draw_triangle_wireframe(vec_t v1, vec_t v2, vec_t v3, color_t color) {
+    void draw_triangle_wireframe(vec4_t v1, vec4_t v2, vec4_t v3, color_t color) {
         draw_line(v1.x, v1.y, v2.x, v2.y, color);
         draw_line(v2.x, v2.y, v3.x, v3.y, color);
         draw_line(v3.x, v3.y, v1.x, v1.y, color);

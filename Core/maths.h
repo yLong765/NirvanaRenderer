@@ -5,8 +5,9 @@
 #ifndef NIRVANARENDERER_MATHS_H
 #define NIRVANARENDERER_MATHS_H
 
-#include <assert.h>
+#include <cassert>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -19,6 +20,11 @@ struct vec {
     vec() = default;
 
     float &operator[](const int i) {
+        assert(i >= 0 && i < n);
+        return data[i];
+    }
+
+    float operator[](const int i) const {
         assert(i >= 0 && i < n);
         return data[i];
     }
@@ -84,8 +90,18 @@ struct vec<2> {
         return i == 0 ? x : y;
     }
 
+    float operator[](const int i) const {
+        assert(i >= 0 && i < 2);
+        return i == 0 ? x : y;
+    }
+
     string toString() const {
         return "(" + to_string(x) + ", " + to_string(y) + ")";
+    }
+
+    vec<2> &normalize() {
+        (*this) = (*this) / sqrt((*this) * (*this));
+        return (*this);
     }
 };
 
@@ -102,8 +118,18 @@ struct vec<3> {
         return i == 0 ? x : (i == 1 ? y : z);
     }
 
+    float operator[](const int i) const {
+        assert(i >= 0 && i < 3);
+        return i == 0 ? x : (i == 1 ? y : z);
+    }
+
     string toString() const {
         return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";
+    }
+
+    vec<3> &normalize() {
+        (*this) = (*this) / sqrt((*this) * (*this));
+        return (*this);
     }
 };
 
@@ -120,10 +146,33 @@ struct vec<4> {
         return i == 0 ? x : (i == 1 ? y : (i == 2 ? z : w));
     }
 
+    float operator[](const int i) const {
+        assert(i >= 0 && i < 4);
+        return i == 0 ? x : (i == 1 ? y : (i == 2 ? z : w));
+    }
+
     string toString() const {
         return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ", " + to_string(w) + ")";
     }
+
+    vec<4> &normalize() {
+        (*this) = (*this) / sqrt((*this) * (*this));
+        return (*this);
+    }
+
+    void to_viewport(int width, int height) {
+        float rhw = 1.0f / w;
+        x = (x * rhw + 1.0f) * width * 0.5f;
+        y = (1.0f - y * rhw) * height * 0.5f;
+        z = z * rhw;
+        w = 1.0f;
+    }
 };
+
+vec<3> vec3_cross(const vec<3> &lhs, const vec<3> &rhs) {
+    return vec<3>{lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x};
+}
+
 ////////////////////////////Vector////////////////////////////////////
 
 ////////////////////////////Matrix////////////////////////////////////
@@ -139,10 +188,22 @@ struct mat {
         return matrix[i];
     }
 
+    vec<ncols> operator[](const int i) const {
+        assert(i >= 0 && i < nrows);
+        return matrix[i];
+    }
+
     static mat<nrows, ncols> identity() {
         mat<nrows, ncols> ret;
         for (int i = nrows; i--;)
             for (int j = ncols; j--; ret[i][j] = (i == j));
+        return ret;
+    }
+
+    static mat<nrows, ncols> zero() {
+        mat<nrows, ncols> ret;
+        for (int i = nrows; i--;)
+            for (int j = ncols; j--; ret[i][j] = 0);
         return ret;
     }
 
@@ -214,5 +275,92 @@ typedef vec<4> vec4_t;
 
 typedef mat<3, 3> mat3_t;
 typedef mat<4, 4> mat4_t;
+
+////////////////////////////Translate////////////////////////////////////
+
+
+/*
+ * eye: the position of the eye point
+ * center: the position of the target point
+ * up: the direction of the up vector
+ *
+ * x_axis.x  x_axis.y  x_axis.z  -dot(x_axis,eye)
+ * y_axis.x  y_axis.y  y_axis.z  -dot(y_axis,eye)
+ * z_axis.x  z_axis.y  z_axis.z  -dot(z_axis,eye)
+ *        0         0         0                 1
+ *
+ * z_axis: normalize(eye-target), the backward vector
+ * x_axis: normalize(cross(up,z_axis)), the right vector
+ * y_axis: cross(z_axis,x_axis), the up vector
+ *
+ * see http://www.songho.ca/opengl/gl_camera.html
+ */
+mat4_t mat4_look_at(const vec3_t eye, const vec3_t center, const vec3_t up = {0, 0, 1}) {
+    vec3_t zaxis = (eye - center).normalize();
+    vec3_t xaxis = vec3_cross(up, zaxis).normalize();
+    vec3_t yaxis = vec3_cross(zaxis, xaxis);
+    mat4_t matrix = mat4_t::identity();
+
+    matrix[0][0] = xaxis.x;
+    matrix[0][1] = xaxis.y;
+    matrix[0][2] = xaxis.z;
+    matrix[0][3] = -(xaxis * eye);
+
+    matrix[1][0] = yaxis.x;
+    matrix[1][1] = yaxis.y;
+    matrix[1][2] = yaxis.z;
+    matrix[1][3] = -(yaxis * eye);
+
+    matrix[2][0] = zaxis.x;
+    matrix[2][1] = zaxis.y;
+    matrix[2][2] = zaxis.z;
+    matrix[2][3] = -(zaxis * eye);
+
+    return matrix;
+}
+
+/*
+ * fovy: the field of view angle in the y direction, in radians
+ * aspect: the aspect ratio, defined as width divided by height
+ * near, far: the distances to the near and far depth clipping planes
+ *
+ * 1/(aspect*tan(fovy/2))              0             0           0
+ *                      0  1/tan(fovy/2)             0           0
+ *                      0              0  -(f+n)/(f-n)  -2fn/(f-n)
+ *                      0              0            -1           0
+ *
+ * this is the same as
+ *     float half_h = near * (float)tan(fovy / 2);
+ *     float half_w = half_h * aspect;
+ *     mat4_frustum(-half_w, half_w, -half_h, half_h, near, far);
+ *
+ * see http://www.songho.ca/opengl/gl_projectionmatrix.html
+ */
+mat4_t mat4_perspective(float fovy, float aspect, float near, float far) {
+    float z_range = far - near;
+    mat4_t matrix = mat4_t::zero();
+    assert(fovy > 0 && aspect > 0);
+    assert(near > 0 && far > 0 && z_range > 0);
+    matrix[1][1] = 1 / (float) tan(fovy / 2);
+    matrix[0][0] = matrix[1][1] / aspect;
+    matrix[2][2] = -(far + near) / z_range;
+    matrix[2][3] = -2 * far * near / z_range;
+    matrix[3][2] = -1;
+    return matrix;
+}
+
+mat4_t mat4_viewport(int x, int y, int w, int h, int n, int f) {
+    mat4_t matrix = mat4_t::identity();
+    matrix[0][0] = w / 2;
+    matrix[1][1] = h / 2;
+    matrix[2][2] = (f - n) / 2;
+
+    matrix[0][3] = x + w / 2;
+    matrix[1][3] = y + h / 2;
+    matrix[2][3] = (n + f) / 2;
+    return matrix;
+}
+
+////////////////////////////Translate////////////////////////////////////
 
 #endif //NIRVANARENDERER_MATHS_H

@@ -7,10 +7,7 @@
 
 typedef unsigned char UCHAR;
 
-#include "Core/mathf.h"
-#include "Core/mat.h"
-#include "Core/vec.h"
-#include "Core/data_struct.h"
+#include "Core/maths.h"
 #include "Core/color.h"
 #include "Core/renderer.h"
 #include "Core/model.h"
