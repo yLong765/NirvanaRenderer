@@ -162,15 +162,18 @@ struct vec<4> {
 
     void to_viewport(int width, int height) {
         float rhw = 1.0f / w;
-        x = (x * rhw + 1.0f) * width * 0.5f;
-        y = (1.0f - y * rhw) * height * 0.5f;
-        z = z * rhw;
+        x = (x * rhw + 1) * 0.5f * width;
+        y = (y * rhw + 1) * 0.5f * height;
+        z = (z * rhw + 1) * 0.5f;
         w = 1.0f;
     }
 };
 
 vec<3> vec3_cross(const vec<3> &lhs, const vec<3> &rhs) {
-    return vec<3>{lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x};
+    float x = lhs.y * rhs.z - lhs.z * rhs.y;
+    float y = lhs.z * rhs.x - lhs.x * rhs.z;
+    float z = lhs.x * rhs.y - lhs.y * rhs.x;
+    return vec<3>{x, y, z};
 }
 
 ////////////////////////////Vector////////////////////////////////////
@@ -211,7 +214,7 @@ struct mat {
         string ret;
         for (int i = 0; i < nrows; i++)
             for (int j = 0; j < ncols; j++)
-                ret += matrix[i][j] + (j == (ncols - 1) ? "\n" : " ");
+                ret += to_string(matrix[i][j]) + (j == (ncols - 1) ? "\n" : " ");
         return ret;
     }
 };
@@ -295,26 +298,26 @@ typedef mat<4, 4> mat4_t;
  *
  * see http://www.songho.ca/opengl/gl_camera.html
  */
-mat4_t mat4_look_at(const vec3_t eye, const vec3_t center, const vec3_t up = {0, 0, 1}) {
-    vec3_t zaxis = (eye - center).normalize();
-    vec3_t xaxis = vec3_cross(up, zaxis).normalize();
-    vec3_t yaxis = vec3_cross(zaxis, xaxis);
+mat4_t mat4_look_at(const vec3_t eye, const vec3_t center, const vec3_t up = {0, 1, 0}) {
+    vec3_t z_axis = (eye - center).normalize();
+    vec3_t x_axis = vec3_cross(up, z_axis).normalize();
+    vec3_t y_axis = vec3_cross(z_axis, x_axis);
     mat4_t matrix = mat4_t::identity();
 
-    matrix[0][0] = xaxis.x;
-    matrix[0][1] = xaxis.y;
-    matrix[0][2] = xaxis.z;
-    matrix[0][3] = -(xaxis * eye);
+    matrix[0][0] = x_axis.x;
+    matrix[0][1] = x_axis.y;
+    matrix[0][2] = x_axis.z;
+    matrix[0][3] = -(x_axis * eye);
 
-    matrix[1][0] = yaxis.x;
-    matrix[1][1] = yaxis.y;
-    matrix[1][2] = yaxis.z;
-    matrix[1][3] = -(yaxis * eye);
+    matrix[1][0] = y_axis.x;
+    matrix[1][1] = y_axis.y;
+    matrix[1][2] = y_axis.z;
+    matrix[1][3] = -(y_axis * eye);
 
-    matrix[2][0] = zaxis.x;
-    matrix[2][1] = zaxis.y;
-    matrix[2][2] = zaxis.z;
-    matrix[2][3] = -(zaxis * eye);
+    matrix[2][0] = z_axis.x;
+    matrix[2][1] = z_axis.y;
+    matrix[2][2] = z_axis.z;
+    matrix[2][3] = -(z_axis * eye);
 
     return matrix;
 }
@@ -341,7 +344,7 @@ mat4_t mat4_perspective(float fovy, float aspect, float near, float far) {
     mat4_t matrix = mat4_t::zero();
     assert(fovy > 0 && aspect > 0);
     assert(near > 0 && far > 0 && z_range > 0);
-    matrix[1][1] = 1 / (float) tan(fovy / 2);
+    matrix[1][1] = 1 / (float) tan(fovy * 0.5f);
     matrix[0][0] = matrix[1][1] / aspect;
     matrix[2][2] = -(far + near) / z_range;
     matrix[2][3] = -2 * far * near / z_range;
@@ -349,15 +352,12 @@ mat4_t mat4_perspective(float fovy, float aspect, float near, float far) {
     return matrix;
 }
 
-mat4_t mat4_viewport(int x, int y, int w, int h, int n, int f) {
+mat4_t mat4_viewport(int x, int y, int w, int h) {
     mat4_t matrix = mat4_t::identity();
-    matrix[0][0] = w / 2;
-    matrix[1][1] = h / 2;
-    matrix[2][2] = (f - n) / 2;
-
-    matrix[0][3] = x + w / 2;
-    matrix[1][3] = y + h / 2;
-    matrix[2][3] = (n + f) / 2;
+    matrix[0][0] = w * 0.5f;
+    matrix[1][1] = h * 0.5f;
+    matrix[0][3] = x + matrix[0][0];
+    matrix[1][3] = y + matrix[1][1];
     return matrix;
 }
 

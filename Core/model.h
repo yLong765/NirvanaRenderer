@@ -22,7 +22,7 @@ public:
     Model(const char *filename) : verts_(), norms_(), faces_() {
         ifstream in;
         in.open(filename, ifstream::in);
-        if (!in.is_open()){
+        if (!in.is_open()) {
             cerr << "Error: " << strerror(errno);
         }
         string line;
@@ -32,7 +32,7 @@ public:
             char trash;
             if (!line.compare(0, 2, "v ")) {
                 iss >> trash;
-                vec4_t v;
+                vec4_t v{0, 0, 0, 1};
                 for (int i = 0; i < 3; i++) iss >> v[i];
                 verts_.push_back(v);
             } else if (!line.compare(0, 3, "vn ")) {
