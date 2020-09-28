@@ -77,6 +77,10 @@ typedef struct {
         draw_line(v3.x, v3.y, v1.x, v1.y, color);
     }
 
+    void draw_triangle_wireframe(vec4_t screen_point[3], color_t color) {
+        draw_triangle_wireframe(screen_point[0], screen_point[1], screen_point[2], color);
+    }
+
 } renderer_t;
 
 renderer_t *create_renderer(int width, int height) {

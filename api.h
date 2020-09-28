@@ -7,9 +7,12 @@
 
 typedef unsigned char UCHAR;
 
+#include "Core/macro.h"
 #include "Core/maths.h"
 #include "Core/color.h"
+#include "Core/camera.h"
 #include "Core/renderer.h"
+#include "Core/transform.h"
 #include "Core/model.h"
 #include "Platform/win.h"
 

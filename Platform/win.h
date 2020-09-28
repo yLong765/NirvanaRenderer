@@ -8,19 +8,26 @@
 #include <windows.h>
 #include "../Core/input.h"
 
-typedef struct {
+struct win_t {
     HWND handle;
     int width;
     int height;
     HDC memory_dc;
 
-    void update_win() {
+    void update_renderer(renderer_t renderer) {
+        //renderer.draw_triangle_wireframe()
+    }
+
+    void update_win() const {
         HDC hDC = GetDC(handle);
         BitBlt(hDC, 0, 0, width, height, memory_dc, 0, 0, SRCCOPY);
         ReleaseDC(handle, hDC);
     }
+};
 
-} win_t;
+float get_aspect(win_t *win) {
+    return (float) win->width / win->height;
+}
 
 win_t *create_win(int, int, const char *, renderer_t *);
 
@@ -49,14 +56,14 @@ win_t *create_win(int width, int height, const char *title, renderer_t *renderer
     memset(&bitmap_header, 0, sizeof(BITMAPINFOHEADER));
     bitmap_header.biSize = sizeof(BITMAPINFOHEADER);
     bitmap_header.biWidth = width;
-    bitmap_header.biHeight = -height;
+    bitmap_header.biHeight = height;
     bitmap_header.biPlanes = 1;
     bitmap_header.biBitCount = 32;
     bitmap_header.biCompression = BI_RGB;
     HBITMAP hbitmap = CreateDIBSection(memory_dc, (BITMAPINFO *) &bitmap_header,
                                        DIB_RGB_COLORS, &ptr, nullptr, 0);
     assert(hbitmap != nullptr);
-    HBITMAP old_bitmap = (HBITMAP)SelectObject(memory_dc, hbitmap);
+    HBITMAP old_bitmap = (HBITMAP) SelectObject(memory_dc, hbitmap);
     DeleteObject(old_bitmap);
     // 分配bitmap和framebuffer
 

@@ -1,39 +1,36 @@
 //
-// Created by yangyinlong01 on 2020/9/23.
+// Created by yangyinlong01 on 2020/9/28.
 //
 
-#ifndef NIRVANARENDERE_TRANSFORM_H
-#define NIRVANARENDERE_TRANSFORM_H
+#ifndef NIRVANARENDERER_TRANSFORM_H
+#define NIRVANARENDERER_TRANSFORM_H
 
-#include "mat.h"
+struct transform_t {
+    vec3_t position;
+    vec3_t rotation;
+    vec3_t scale;
 
-#define PI 3.1415926f
+    void set_position(vec3_t pos) { position = pos; }
 
-typedef struct {
-    mat_t world;        // 世界坐标变换
-    mat_t view;         // 相机坐标变换
-    mat_t projection;   // 投影变换
-    mat_t transform;    // transform = world * view * projection
-    float width, height;
+    void set_rotation(vec3_t rot) { rotation = rot; }
 
-    void init(int, int);
+    void set_scale(vec3_t sca) { scale = sca; }
 
-    void update();
+    mat4_t get_transform_matrix() {
+        mat4_t transform = mat4_t::identity();
+        transform = translate_matrix(position);
+        transform = transform * rotate_z_matrix(deg2rad(rotation.z));
+        transform = transform * rotate_y_matrix(deg2rad(rotation.y));
+        transform = transform * rotate_x_matrix(deg2rad(rotation.x));
+        transform = transform * scale_matrix(scale);
+        return transform;
+    }
+};
 
-} transform_t;
-
-void transform_t::init(int w, int h) {
-    float aspect = (float) w / (float) h;
-    world.set_identity();
-    view.set_identity();
-    projection.set_perspective(PI * 0.5f, aspect, 1.0f, 500.0f);
-    width = w;
-    height = h;
-    update();
+transform_t *create_transform() {
+    transform_t *transform = new transform_t();
+    transform->scale = vec3_t::one();
+    return transform;
 }
 
-void transform_t::update() {
-    transform = world * view * projection;
-}
-
-#endif //NIRVANARENDERE_TRANSFORM_H
+#endif //NIRVANARENDERER_TRANSFORM_H

@@ -131,6 +131,10 @@ struct vec<3> {
         (*this) = (*this) / sqrt((*this) * (*this));
         return (*this);
     }
+
+    static vec<3> one() {
+        return {1, 1, 1};
+    }
 };
 
 template<>
@@ -281,7 +285,6 @@ typedef mat<4, 4> mat4_t;
 
 ////////////////////////////Translate////////////////////////////////////
 
-
 /*
  * eye: the position of the eye point
  * center: the position of the target point
@@ -323,9 +326,9 @@ mat4_t mat4_look_at(const vec3_t eye, const vec3_t center, const vec3_t up = {0,
 }
 
 /*
- * fovy: the field of view angle in the y direction, in radians
- * aspect: the aspect ratio, defined as width divided by height
- * near, far: the distances to the near and far depth clipping planes
+ * fovy: y方向的视角(单位为弧度)
+ * aspect: 宽高比
+ * near, far: 近远深度裁剪平面的距离
  *
  * 1/(aspect*tan(fovy/2))              0             0           0
  *                      0  1/tan(fovy/2)             0           0
@@ -352,12 +355,72 @@ mat4_t mat4_perspective(float fovy, float aspect, float near, float far) {
     return matrix;
 }
 
-mat4_t mat4_viewport(int x, int y, int w, int h) {
+/*
+ * width: 场景宽度
+ * height: 场景高度
+ * ndc_point: NDC格式中的点
+ *
+ * x = [-1, 1] -> [0, w]
+ * y = [-1, 1] -> [0, h]
+ * z = [-1, 1] -> [0, 1]
+ *
+ * https://www.khronos.org/registry/OpenGL/specs/es/2.0/es_full_spec_2.0.pdf
+ */
+vec4_t viewport_transform(int width, int height, vec4_t ndc_point) {
+    float rhw = 1.0f / ndc_point.w;
+    float x = (ndc_point.x * rhw + 1) * 0.5f * width;
+    float y = (ndc_point.y * rhw + 1) * 0.5f * height;
+    float z = (ndc_point.z * rhw + 1) * 0.5f;
+    return {x, y, z};
+}
+
+mat4_t translate_matrix(vec3_t v) {
     mat4_t matrix = mat4_t::identity();
-    matrix[0][0] = w * 0.5f;
-    matrix[1][1] = h * 0.5f;
-    matrix[0][3] = x + matrix[0][0];
-    matrix[1][3] = y + matrix[1][1];
+    matrix[0][3] = v.x;
+    matrix[1][3] = v.y;
+    matrix[2][3] = v.z;
+    return matrix;
+}
+
+mat4_t scale_matrix(vec3_t v) {
+    mat4_t matrix = mat4_t::identity();
+    assert(v.x != 0 && v.y != 0 && v.z != 0);
+    matrix[0][0] = v.x;
+    matrix[1][1] = v.y;
+    matrix[2][2] = v.z;
+    return matrix;
+}
+
+mat4_t rotate_x_matrix(float angle) {
+    float c = (float)cos(angle);
+    float s = (float)sin(angle);
+    mat4_t matrix = mat4_t::identity();
+    matrix[1][1] = c;
+    matrix[1][2] = -s;
+    matrix[2][1] = s;
+    matrix[2][2] = c;
+    return matrix;
+}
+
+mat4_t rotate_y_matrix(float angle) {
+    float c = (float)cos(angle);
+    float s = (float)sin(angle);
+    mat4_t matrix = mat4_t::identity();
+    matrix[0][0] = c;
+    matrix[0][2] = s;
+    matrix[2][0] = -s;
+    matrix[2][2] = c;
+    return matrix;
+}
+
+mat4_t rotate_z_matrix(float angle) {
+    float c = (float)cos(angle);
+    float s = (float)sin(angle);
+    mat4_t matrix = mat4_t::identity();
+    matrix[0][0] = c;
+    matrix[0][1] = -s;
+    matrix[1][0] = s;
+    matrix[1][1] = c;
     return matrix;
 }
 

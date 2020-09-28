@@ -9,14 +9,9 @@ include_directories(Platform)
 
 add_executable(NirvanaRenderer
         Core/color.h
-        Core/data_struct.h
         Core/input.h
-        Core/mat.h
-        Core/mathf.h
         Core/model.h
         Core/renderer.h
-        Core/transform.h
-        Core/vec.h
         Platform/win.h
         api.h
-        main.cpp Core/maths.h)
+        main.cpp Core/maths.h Core/camera.h Core/macro.h Core/transform.h)

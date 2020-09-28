@@ -19,6 +19,8 @@ class Model {
     vector<vector<vec4_t>> faces_;
 
 public:
+    transform_t *transform;
+
     Model(const char *filename) : verts_(), norms_(), faces_() {
         ifstream in;
         in.open(filename, ifstream::in);
@@ -37,7 +39,7 @@ public:
                 verts_.push_back(v);
             } else if (!line.compare(0, 3, "vn ")) {
                 iss >> trash >> trash;
-                vec4_t n;
+                vec4_t n{0, 0, 0, 1};
                 for (int i = 0; i < 3; i++) iss >> n[i];
                 norms_.push_back(n);
             } else if (!line.compare(0, 2, "f ")) {
@@ -52,6 +54,8 @@ public:
             }
         }
         printf("model loading finish\n");
+
+        transform = create_transform();
     }
 
     int face_size() { return faces_.size(); }
@@ -59,6 +63,10 @@ public:
     vec4_t vert(int iface, int nthvert) { return verts_[faces_[iface][nthvert][0]]; }
 
     vec4_t normal(int iface, int nthvert) { return verts_[faces_[iface][nthvert][2]]; }
+
+    mat4_t get_transform_matrix() {
+        return transform->get_transform_matrix();
+    }
 };
 
 #endif //NIRVANARENDERE_MODEL_H

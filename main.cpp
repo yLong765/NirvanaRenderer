@@ -5,48 +5,51 @@ using namespace std;
 
 static int screen_width = 800;
 static int screen_height = 600;
-static float z_near = 1.0f;
-static float z_far = 500.0f;
 
-#define PI 3.1415926f
-#define aspect ((float)screen_width / (float)screen_height)
+void update_input() {
+
+}
 
 int main() {
-
     renderer_t *renderer = create_renderer(screen_width, screen_height);
-
     win_t *win = create_win(screen_width, screen_height, "NirvanaRenderer", renderer);
-
-    Model *cube = new Model(R"(..\Model\cube.obj)");
-
-    mat4_t world = mat4_t::identity();
-    mat4_t view = mat4_look_at({3, 0, 0}, {0, 0, 0});
-    mat4_t projection = mat4_perspective(PI * 0.5f, aspect, z_near, z_far);
-    mat4_t transform = projection * view * world;
-    for (int i = 0; i < cube->face_size(); i++) {
-        vec4_t v1 = cube->vert(i, 0);
-        vec4_t v2 = cube->vert(i, 1);
-        vec4_t v3 = cube->vert(i, 2);
-        cout << v1.toString() << endl << v2.toString() << endl << v3.toString() << endl << endl;
-        v1 = transform * v1;
-        v2 = transform * v2;
-        v3 = transform * v3;
-        cout << v1.toString() << endl << v2.toString() << endl << v3.toString() << endl << endl;
-        v1.to_viewport(screen_width, screen_height);
-        v2.to_viewport(screen_width, screen_height);
-        v3.to_viewport(screen_width, screen_height);
-        cout << v1.toString() << endl << v2.toString() << endl << v3.toString() << endl << endl;
-        renderer->draw_triangle_wireframe(v1, v2, v3, {255, 0, 0});
-    }
-
-    delete cube;
-
-    win->update_win();
+    camera_t *camera = create_camera({0, 0, 100});
+    Model *model = new Model(R"(..\Model\qlsn.obj)");
 
     MSG msg;
     while (GetMessage(&msg, (HWND) nullptr, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+
+        if (keys[VK_UP]) model->transform->rotation.x -= 1;
+        if (keys[VK_DOWN]) model->transform->rotation.x += 1;
+        if (keys[VK_LEFT]) model->transform->rotation.y -= 1;
+        if (keys[VK_RIGHT]) model->transform->rotation.y += 1;
+        if (keys[VK_E]) model->transform->position.y += 1;
+        if (keys[VK_Q]) model->transform->position.y -= 1;
+        if (keys[VK_A]) model->transform->position.x -= 1;
+        if (keys[VK_D]) model->transform->position.x += 1;
+        if (keys[VK_W]) model->transform->position.z += 1;
+        if (keys[VK_S]) model->transform->position.z -= 1;
+        if (keys[VK_R]) model->transform->scale = {2, 2, 2};
+        if (keys[VK_T]) model->transform->scale = {1, 1, 1};
+
+        renderer->clear_color({0, 0, 0});
+
+        mat4_t world = model->get_transform_matrix();
+        mat4_t view = get_view_matrix(camera);
+        mat4_t projection = get_projection_matrix(camera, get_aspect(win));
+        mat4_t transform = projection * view * world;
+        for (int i = 0; i < model->face_size(); i++) {
+            vec4_t screen_point[3];
+            for (int j = 0; j < 3; j++) {
+                vec4_t ndc_point = transform * model->vert(i, j);
+                screen_point[j] = viewport_transform(screen_width, screen_height, ndc_point);
+            }
+            renderer->draw_triangle_wireframe(screen_point, {255, 0, 0});
+        }
+
+        win->update_win();
     }
 
     return 0;
