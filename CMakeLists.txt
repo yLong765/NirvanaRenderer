@@ -14,4 +14,4 @@ add_executable(NirvanaRenderer
         Core/renderer.h
         Platform/win.h
         api.h
-        main.cpp Core/maths.h Core/camera.h Core/macro.h Core/transform.h)
+        main.cpp Core/maths.h Core/camera.h Core/macro.h Core/Component/transform.h Core/Component/com_inc.h Core/object.h Core/Asset/obj_loader.h Core/Asset/loader.h Core/Asset/asset_inc.h Core/Component/component.h)

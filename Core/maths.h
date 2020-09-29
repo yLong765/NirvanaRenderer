@@ -135,6 +135,10 @@ struct vec<3> {
     static vec<3> one() {
         return {1, 1, 1};
     }
+
+    static vec<3> zero() {
+        return {0, 0, 0};
+    }
 };
 
 template<>

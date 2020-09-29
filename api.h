@@ -12,8 +12,13 @@ typedef unsigned char UCHAR;
 #include "Core/color.h"
 #include "Core/camera.h"
 #include "Core/renderer.h"
-#include "Core/transform.h"
+#include "Core/Component/com_inc.h"
 #include "Core/model.h"
 #include "Platform/win.h"
+
+
+#include "Core/object.h"
+
+#include "Asset/asset_inc.h"
 
 #endif //NIRVANARENDERE_API_H

@@ -5,16 +5,17 @@
 #ifndef NIRVANARENDERER_TRANSFORM_H
 #define NIRVANARENDERER_TRANSFORM_H
 
-struct transform_t {
+class transform_t : public component_t {
+public:
     vec3_t position;
     vec3_t rotation;
     vec3_t scale;
 
-    void set_position(vec3_t pos) { position = pos; }
-
-    void set_rotation(vec3_t rot) { rotation = rot; }
-
-    void set_scale(vec3_t sca) { scale = sca; }
+    transform_t() {
+        position = vec3_t::zero();
+        rotation = vec3_t::zero();
+        scale = vec3_t::one();
+    }
 
     mat4_t get_transform_matrix() {
         mat4_t transform = mat4_t::identity();
@@ -27,10 +28,10 @@ struct transform_t {
     }
 };
 
-transform_t *create_transform() {
-    transform_t *transform = new transform_t();
-    transform->scale = vec3_t::one();
-    return transform;
-}
+//transform_t *create_transform() {
+//    transform_t *transform = new transform_t();
+//    transform->scale = vec3_t::one();
+//    return transform;
+//}
 
 #endif //NIRVANARENDERER_TRANSFORM_H

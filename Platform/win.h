@@ -111,6 +111,7 @@ WNDCLASS register_class(const char *title) {
 }
 
 static LRESULT CALLBACK event_win(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    float offset;
     switch (msg) {
         case WM_CLOSE:
             DestroyWindow(hWnd);

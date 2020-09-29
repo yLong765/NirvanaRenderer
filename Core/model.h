@@ -14,13 +14,12 @@
 
 using namespace std;
 
-class Model {
+struct Model {
+private:
     vector<vec4_t> verts_, norms_;
     vector<vector<vec4_t>> faces_;
 
 public:
-    transform_t *transform;
-
     Model(const char *filename) : verts_(), norms_(), faces_() {
         ifstream in;
         in.open(filename, ifstream::in);
@@ -54,8 +53,6 @@ public:
             }
         }
         printf("model loading finish\n");
-
-        transform = create_transform();
     }
 
     int face_size() { return faces_.size(); }
@@ -63,10 +60,6 @@ public:
     vec4_t vert(int iface, int nthvert) { return verts_[faces_[iface][nthvert][0]]; }
 
     vec4_t normal(int iface, int nthvert) { return verts_[faces_[iface][nthvert][2]]; }
-
-    mat4_t get_transform_matrix() {
-        return transform->get_transform_matrix();
-    }
 };
 
 #endif //NIRVANARENDERE_MODEL_H
